@@ -1,0 +1,9 @@
+
+[package]
+name = "SendMail"
+version = "0.1.0"
+authors = ["Filippo Cucchetto <filippocucchetto@gmail.com>"]
+
+[dependencies]
+getopts = "0.2.14"
+rustc-serialize = "0.3.19"

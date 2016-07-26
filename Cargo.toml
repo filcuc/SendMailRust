@@ -7,3 +7,7 @@ authors = ["Filippo Cucchetto <filippocucchetto@gmail.com>"]
 [dependencies]
 getopts = "0.2.14"
 rustc-serialize = "0.3.19"
+
+[dependencies.url]
+git = "https://github.com/servo/rust-url"
+features = ["query_encoding"]

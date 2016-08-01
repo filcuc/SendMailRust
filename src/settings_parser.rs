@@ -1,6 +1,5 @@
-use std::fmt;
-extern crate getopts;
 use getopts::Options;
+use std::fmt;
 use std::env;
 use std::fs::File;
 
@@ -48,13 +47,13 @@ pub struct SettingsParser {
 }
 
 pub struct Settings {
-    setup: bool,
-    client_id: String,
-    client_secret: String,
-    from_field: String,
-    to_field: String,
-    subject_field: String,
-    body_field: String
+    pub setup: bool,
+    pub client_id: String,
+    pub client_secret: String,
+    pub from_field: String,
+    pub to_field: String,
+    pub subject_field: String,
+    pub body_field: String
 }
 
 impl SettingsParser {

@@ -1,13 +1,10 @@
 use oauth2_flow::*;
 use rustc_serialize::json;
-use rustc_serialize::Decodable;
-use rustc_serialize::Encodable;
 use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::Write;
 use std::io::Read;
 use std::io;
-use std::vec;
 
 #[derive(Debug)]
 pub enum CredentialsError {
@@ -32,9 +29,7 @@ impl From<io::Error> for CredentialsError {
 
 #[derive(RustcDecodable, RustcEncodable)]
 pub struct Credentials {
-    access_token: String,
-    refresh_token: String,
-    expires_in: i64,
+    access_token_data: AccessTokenData,
     client_id: String,
     client_secret: String,
 }
@@ -55,12 +50,10 @@ impl Credentials {
         let mut access_code = String::new();
         try!{ io::stdin().read_line(&mut access_code)};
         println!("Exchanging {} for an access_token", access_code);
-        let access_token = try!{flow.step_2_exchange_access_code(access_code.as_str()).map_err(|_|CredentialsError::TokenExchangeError)};
-        println!("Obtained {} token", access_token.access_token);
+        let access_token_data = try!{flow.step_2_exchange_access_code(access_code.as_str()).map_err(|_|CredentialsError::TokenExchangeError)};
+        println!("Obtained {} token", access_token_data.access_token);
         let result = Credentials {
-            access_token: access_token.access_token,
-            refresh_token: access_token.refresh_token,
-            expires_in: access_token.expires_in,
+            access_token_data: access_token_data,
             client_id: client_id,
             client_secret: client_secret
         };

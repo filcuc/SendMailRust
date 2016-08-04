@@ -1,7 +1,6 @@
 use getopts::Options;
 use std::fmt;
 use std::env;
-use std::fs::File;
 
 #[derive(Debug)]
 pub enum SettingsParserErrorKind {

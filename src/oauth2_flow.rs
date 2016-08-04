@@ -11,12 +11,12 @@ pub enum OAuth2FlowError {
     AccessTokenParsingError
 }
 
-#[derive(RustcDecodable, RustcEncodable)]
+#[derive(RustcDecodable, RustcEncodable, Debug)]
 pub struct AccessTokenData {
-    access_token: String,
-    token_type: String,
-    expires_in: i64,
-    refresh_token: String
+    pub access_token: String,
+    pub token_type: String,
+    pub expires_in: i64,
+    pub refresh_token: String
 }
 
 pub struct OAuth2Flow {

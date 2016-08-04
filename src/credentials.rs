@@ -56,11 +56,11 @@ impl Credentials {
         try!{ io::stdin().read_line(&mut access_code)};
         println!("Exchanging {} for an access_token", access_code);
         let access_token = try!{flow.step_2_exchange_access_code(access_code.as_str()).map_err(|_|CredentialsError::TokenExchangeError)};
-        println!("Obtained {} token", access_token);
+        println!("Obtained {} token", access_token.access_token);
         let result = Credentials {
-            access_token: access_token,
-            refresh_token: "".to_string(),
-            expires_in: 3600,
+            access_token: access_token.access_token,
+            refresh_token: access_token.refresh_token,
+            expires_in: access_token.expires_in,
             client_id: client_id,
             client_secret: client_secret
         };

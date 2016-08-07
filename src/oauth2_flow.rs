@@ -1,9 +1,9 @@
-use std::io::Read;
 use hyper::{Client, Url};
 use hyper::header::{Headers, ContentType};
 use hyper::mime::{Mime, TopLevel, SubLevel};
 use url::percent_encoding::{DEFAULT_ENCODE_SET, utf8_percent_encode};
 use rustc_serialize::json;
+use std::io::Read;
 
 #[derive(Debug)]
 pub enum OAuth2FlowError {

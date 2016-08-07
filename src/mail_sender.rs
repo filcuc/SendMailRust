@@ -1,8 +1,8 @@
-use credentials::{Credentials};
+use credentials::Credentials;
 use hyper::{Client, Url};
 use hyper::header::{Headers, Authorization, Bearer, ContentType};
 use hyper::mime::Mime;
-use hyper::status::{StatusCode};
+use hyper::status::StatusCode;
 use std::str::FromStr;
 
 pub enum SendMailError {

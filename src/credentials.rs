@@ -1,10 +1,9 @@
 use oauth2_flow::*;
 use rustc_serialize::json;
-use std::fs::File;
-use std::fs::OpenOptions;
-use std::io::Write;
-use std::io::Read;
+use std::fs::{File, OpenOptions};
 use std::io;
+use std::io::{Write, Read};
+
 
 #[derive(Debug)]
 pub enum CredentialsError {

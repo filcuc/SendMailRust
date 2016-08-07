@@ -37,7 +37,6 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    /// Setup the Credentials through an oauth authentication flow
     pub fn setup(client_id: String, client_secret: String) -> Result<Credentials, CredentialsError> {
         let flow = Credentials::create_oauth_flow(client_id.clone(), client_secret.clone());
         let authorize_url = flow.step_1_get_authorize_url();
@@ -57,7 +56,6 @@ impl Credentials {
         Ok(result)
     }
 
-    /// Load a Credentials stuct from the json file
     fn load() -> Result<Credentials, CredentialsError> {
         println!("Restoring credentials from json file");
         let mut file = try!(File::open("credentials.json"));
@@ -67,7 +65,6 @@ impl Credentials {
         Ok(result)
     }
 
-    /// Refresh the Credentials file
     fn refresh(&mut self) -> Result<(), CredentialsError> {
         println!("Refreshing the credentials");
         let flow = Credentials::create_oauth_flow(self.client_id.clone(), self.client_secret.clone());
@@ -75,14 +72,12 @@ impl Credentials {
         Ok(())
     }
 
-    /// Load the Credentials from the config file and refresh them
     pub fn load_and_refresh() -> Result<Credentials, CredentialsError> {
         let mut credentials = try!(Credentials::load());
         try!(credentials.refresh());
         Ok(credentials)
     }
 
-    /// Save the Credentials to the json file
     fn save(&self) -> Result<(), CredentialsError> {
         println!("Saving the credentials");
         let mut f = try!(OpenOptions::new().create(true).write(true).open("credentials.json"));
@@ -92,7 +87,6 @@ impl Credentials {
         Ok(())
     }
 
-    /// Create an oauth authentication flow
     fn create_oauth_flow(client_id: String, client_secret: String) -> OAuth2Flow {
         OAuth2Flow {
             client_id: client_id,

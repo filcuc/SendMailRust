@@ -7,12 +7,9 @@ use std::io::{Write, Read};
 
 #[derive(Debug)]
 pub enum CredentialsError {
-    GenericError,
     IOError(io::Error),
     EncoderError(json::EncoderError),
     DecoderError(json::DecoderError),
-    TokenExchangeError,
-    AccessTokenRefreshError,
     OAuth2Error(OAuth2FlowError)
 }
 

@@ -9,14 +9,14 @@ use std::io::Read;
 pub enum OAuth2FlowError {
     InvalidUrlError,
     NetworkError,
-    AccessTokenParsingError
+    JsonDecodeError
 }
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
-pub struct RefreshTokenData {
-    pub access_token: String,
-    pub token_type: String,
-    pub expires_in: i64,
+struct RefreshTokenData {
+    access_token: String,
+    token_type: String,
+    expires_in: i64,
 }
 
 #[derive(RustcDecodable, RustcEncodable, Debug)]
@@ -45,16 +45,16 @@ impl OAuth2Flow {
 
     pub fn step_2_exchange_access_code(&self, access_code: &str) -> Result<AccessTokenData, OAuth2FlowError> {
         let client = Client::new();
-        let url = try!{Url::parse(self.token_uri.as_str()).map_err(|_|OAuth2FlowError::InvalidUrlError)};
+        let url = try!(Url::parse(self.token_uri.as_str()).map_err(|_|OAuth2FlowError::InvalidUrlError));
         let mut headers = Headers::new();
         headers.set(ContentType(Mime(TopLevel::Application, SubLevel::WwwFormUrlEncoded, vec![])));
         let body = format!("code={}&client_id={}&client_secret={}&redirect_uri={}&grant_type={}",
                            access_code, self.client_id, self.client_secret,
                            self.redirect_uri, "authorization_code");
-        let mut res = try!{client.post(url).headers(headers).body(body.as_str()).send().map_err(|_|OAuth2FlowError::NetworkError)};
+        let mut res = try!(client.post(url).headers(headers).body(body.as_str()).send().map_err(|_|OAuth2FlowError::NetworkError));
         let mut res_body = String::new();
-        try!{res.read_to_string(&mut res_body).map_err(|_|OAuth2FlowError::NetworkError)};
-        let result = try!{json::decode::<AccessTokenData>(res_body.as_str()).map_err(|_|OAuth2FlowError::AccessTokenParsingError)};
+        try!(res.read_to_string(&mut res_body).map_err(|_|OAuth2FlowError::NetworkError));
+        let result = try!(json::decode::<AccessTokenData>(res_body.as_str()).map_err(|_|OAuth2FlowError::JsonDecodeError));
         Ok(result)
     }
 
@@ -69,7 +69,7 @@ impl OAuth2Flow {
         let mut res = try!(client.post(url).headers(headers).body(body.as_str()).send().map_err(|_|OAuth2FlowError::NetworkError));
         let mut res_body = String::new();
         try!(res.read_to_string(&mut res_body).map_err(|_|OAuth2FlowError::NetworkError));
-        let result = try!(json::decode::<RefreshTokenData>(res_body.as_str()).map_err(|_|OAuth2FlowError::AccessTokenParsingError));
+        let result = try!(json::decode::<RefreshTokenData>(res_body.as_str()).map_err(|_|OAuth2FlowError::JsonDecodeError));
         Ok(AccessTokenData{
             access_token: result.access_token,
             refresh_token: access_token_data.refresh_token.clone(),

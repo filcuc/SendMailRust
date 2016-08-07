@@ -1,12 +1,9 @@
 use getopts::Options;
-use std::fmt;
-use std::env;
+use std::{fmt, env};
 
 #[derive(Debug)]
 pub enum SettingsParserErrorKind {
-    GenericError,
     NotEnoughArguments,
-    MissingCredentialFileSetupNeeded,
     MissingFromField,
     MissingToField,
     MissingSubjectField,
@@ -25,8 +22,6 @@ pub struct SettingsParserError {
 impl fmt::Display for SettingsParserError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let message = match self.kind {
-            SettingsParserErrorKind::GenericError => "Generic Error",
-            SettingsParserErrorKind::MissingCredentialFileSetupNeeded => "Missing Credential file Setup Needed",
             SettingsParserErrorKind::MissingFromField => "Missing --from field",
             SettingsParserErrorKind::MissingToField => "Missing --to field",
             SettingsParserErrorKind::MissingSubjectField => "Missing --subject field",

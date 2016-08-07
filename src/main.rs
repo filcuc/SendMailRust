@@ -13,18 +13,21 @@ use mail_sender::*;
 fn main() {
     let parser = SettingsParser::new();
     let settings = parser.parse();
-    if settings.is_err() {
-        let brief = format!("{}", settings.err().unwrap());
-        parser.print_usage(brief);
+    if let Err(err) = settings {
+        parser.print_usage(format!("{}", err));
         return;
     }
-    let mut settings = settings.unwrap();
-    settings.client_id = "259740745275-uqaacpq45uak4avaciepv8u3ffgv286k.apps.googleusercontent.com".to_string();
-    settings.client_secret = "DM6Kp3fF_0_ANVIJWYQUxI4n".to_string();
+    let settings = settings.unwrap();
     let credentials = match settings.setup {
         true => Credentials::setup(settings.client_id, settings.client_secret),
-        false => Credentials::load()
+        false => Credentials::load_and_refresh()
     };
-
-    MailSender::send()
+    if credentials.is_err() {
+        println!("Failed to obtain valid credentials. Please rerun with --setup");
+        return;
+    };
+    let credentials = credentials.unwrap();
+    let sender = MailSender::new(&credentials);
+    sender.send(settings.from_field.as_str(), settings.to_field.as_str(),
+                settings.subject_field.as_str(), settings.body_field.as_str());
 }

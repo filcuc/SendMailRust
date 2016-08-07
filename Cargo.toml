@@ -1,6 +1,5 @@
-
 [package]
-name = "SendMail"
+name = "send_mail"
 version = "0.1.0"
 authors = ["Filippo Cucchetto <filippocucchetto@gmail.com>"]
 

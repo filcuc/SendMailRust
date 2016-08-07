@@ -28,6 +28,10 @@ fn main() {
     };
     let credentials = credentials.unwrap();
     let sender = MailSender::new(&credentials);
-    sender.send(settings.from_field.as_str(), settings.to_field.as_str(),
-                settings.subject_field.as_str(), settings.body_field.as_str());
+    let result = sender.send(settings.from_field.as_str(), settings.to_field.as_str(),
+                             settings.subject_field.as_str(), settings.body_field.as_str());
+    match result {
+        Ok(_) => println!("Email successfully sent"),
+        Err(_) => println!("An error occurred while sending"),
+    }
 }

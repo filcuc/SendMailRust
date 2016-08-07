@@ -48,7 +48,7 @@ impl Credentials {
         println!("Please open a browser at the following url {} and grant access to this application", authorize_url);
         println!("Paste here the obtained access code");
         let mut access_code = String::new();
-        try!{ io::stdin().read_line(&mut access_code)};
+        try!(io::stdin().read_line(&mut access_code));
         println!("Exchanging {} for an access_token", access_code);
         let access_token_data = try!(flow.step_2_exchange_access_code(access_code.as_str()));
         println!("Obtained {} token", access_token_data.access_token);
@@ -57,7 +57,7 @@ impl Credentials {
             client_id: client_id,
             client_secret: client_secret
         };
-        try!{result.save()};
+        try!(result.save());
         Ok(result)
     }
 
@@ -75,7 +75,7 @@ impl Credentials {
     fn refresh(&mut self) -> Result<(), CredentialsError> {
         println!("Refreshing the credentials");
         let flow = Credentials::create_oauth_flow(self.client_id.clone(), self.client_secret.clone());
-        self.access_token_data = try!{flow.refresh_access_token(&self.access_token_data)};
+        self.access_token_data = try!(flow.refresh_access_token(&self.access_token_data));
         Ok(())
     }
 

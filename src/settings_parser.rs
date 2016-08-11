@@ -11,12 +11,12 @@ pub enum SettingsParserErrorKind {
     SetupMissingClientId,
     SetupMissingClientSecret,
     ParsingError,
-    PrintHelp
+    PrintHelp,
 }
 
 #[derive(Debug)]
 pub struct SettingsParserError {
-    kind: SettingsParserErrorKind
+    kind: SettingsParserErrorKind,
 }
 
 impl fmt::Display for SettingsParserError {
@@ -27,8 +27,12 @@ impl fmt::Display for SettingsParserError {
             SettingsParserErrorKind::MissingSubjectField => "Missing --subject field",
             SettingsParserErrorKind::MissingBodyField => "Missing --body field",
             SettingsParserErrorKind::NotEnoughArguments => "Expected at least an argument",
-            SettingsParserErrorKind::SetupMissingClientId => "Setup requested but --client_id is missing",
-            SettingsParserErrorKind::SetupMissingClientSecret => "Setup requested but --client_secret is missing",
+            SettingsParserErrorKind::SetupMissingClientId => {
+                "Setup requested but --client_id is missing"
+            }
+            SettingsParserErrorKind::SetupMissingClientSecret => {
+                "Setup requested but --client_secret is missing"
+            }
             SettingsParserErrorKind::ParsingError => "Invalid arguments provided",
             SettingsParserErrorKind::PrintHelp => "Program help requested",
         };
@@ -37,7 +41,7 @@ impl fmt::Display for SettingsParserError {
 }
 
 pub struct SettingsParser {
-    parser: Options
+    parser: Options,
 }
 
 pub struct Settings {
@@ -47,7 +51,7 @@ pub struct Settings {
     pub from_field: String,
     pub to_field: String,
     pub subject_field: String,
-    pub body_field: String
+    pub body_field: String,
 }
 
 impl SettingsParser {
@@ -64,10 +68,12 @@ impl SettingsParser {
                 .optopt("", "body", "The email body", "BODY");
             result
         };
-        SettingsParser { parser: parser}
+        SettingsParser { parser: parser }
     }
 
-    pub fn print_usage<S>(&self, brief: S) where S: Into<String> {
+    pub fn print_usage<S>(&self, brief: S)
+        where S: Into<String>
+    {
         let brief = format!("Info: {}", brief.into());
         println!("{}", self.parser.usage(brief.as_str()))
     }
@@ -75,11 +81,11 @@ impl SettingsParser {
     pub fn parse(&self) -> Result<Settings, SettingsParserError> {
         let args: Vec<String> = env::args().collect();
         if args.len() == 1 {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::NotEnoughArguments })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::NotEnoughArguments });
         }
         let matches = self.parser.parse(&args);
         if matches.is_err() {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::ParsingError })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::ParsingError });
         }
         let matches = matches.unwrap();
         let settings = Settings {
@@ -89,31 +95,35 @@ impl SettingsParser {
             from_field: matches.opt_str("from").unwrap_or(String::new()),
             to_field: matches.opt_str("to").unwrap_or(String::new()),
             subject_field: matches.opt_str("subject").unwrap_or(String::new()),
-            body_field: matches.opt_str("body").unwrap_or(String::new())
+            body_field: matches.opt_str("body").unwrap_or(String::new()),
         };
         if matches.opt_present("help") {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::PrintHelp })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::PrintHelp });
         }
         if matches.opt_present("setup") {
             if !matches.opt_present("client_id") {
-                return Err(SettingsParserError { kind: SettingsParserErrorKind::SetupMissingClientId })
+                return Err(SettingsParserError {
+                    kind: SettingsParserErrorKind::SetupMissingClientId,
+                });
             }
             if !matches.opt_present("client_secret") {
-                return Err(SettingsParserError { kind: SettingsParserErrorKind::SetupMissingClientSecret })
+                return Err(SettingsParserError {
+                    kind: SettingsParserErrorKind::SetupMissingClientSecret,
+                });
             }
-            return Ok(settings)
+            return Ok(settings);
         }
         if !matches.opt_present("from") {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingFromField })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingFromField });
         }
         if !matches.opt_present("to") {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingToField })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingToField });
         }
         if !matches.opt_present("subject") {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingSubjectField })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingSubjectField });
         }
         if !matches.opt_present("body") {
-            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingBodyField })
+            return Err(SettingsParserError { kind: SettingsParserErrorKind::MissingBodyField });
         }
         Ok(settings)
     }

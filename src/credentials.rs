@@ -10,23 +10,31 @@ pub enum CredentialsError {
     IOError(io::Error),
     EncoderError(json::EncoderError),
     DecoderError(json::DecoderError),
-    OAuth2Error(OAuth2FlowError)
+    OAuth2Error(OAuth2FlowError),
 }
 
 impl From<json::EncoderError> for CredentialsError {
-    fn from(err: json::EncoderError) -> CredentialsError { CredentialsError::EncoderError(err) }
+    fn from(err: json::EncoderError) -> CredentialsError {
+        CredentialsError::EncoderError(err)
+    }
 }
 
 impl From<json::DecoderError> for CredentialsError {
-    fn from(err: json::DecoderError) -> CredentialsError { CredentialsError::DecoderError(err) }
+    fn from(err: json::DecoderError) -> CredentialsError {
+        CredentialsError::DecoderError(err)
+    }
 }
 
 impl From<io::Error> for CredentialsError {
-    fn from(err: io::Error) -> CredentialsError  { CredentialsError::IOError(err) }
+    fn from(err: io::Error) -> CredentialsError {
+        CredentialsError::IOError(err)
+    }
 }
 
 impl From<OAuth2FlowError> for CredentialsError {
-    fn from(err: OAuth2FlowError) -> CredentialsError { CredentialsError::OAuth2Error(err) }
+    fn from(err: OAuth2FlowError) -> CredentialsError {
+        CredentialsError::OAuth2Error(err)
+    }
 }
 
 #[derive(RustcDecodable, RustcEncodable)]
@@ -37,10 +45,14 @@ pub struct Credentials {
 }
 
 impl Credentials {
-    pub fn setup(client_id: String, client_secret: String) -> Result<Credentials, CredentialsError> {
+    pub fn setup(client_id: String,
+                 client_secret: String)
+                 -> Result<Credentials, CredentialsError> {
         let flow = Credentials::create_oauth_flow(client_id.clone(), client_secret.clone());
         let authorize_url = flow.step_1_get_authorize_url();
-        println!("Please open a browser at the following url {} and grant access to this application", authorize_url);
+        println!("Please open a browser at the following url {} and grant access to this \
+                  application",
+                 authorize_url);
         println!("Paste here the obtained access code");
         let mut access_code = String::new();
         try!(io::stdin().read_line(&mut access_code));
@@ -50,7 +62,7 @@ impl Credentials {
         let result = Credentials {
             access_token_data: access_token_data,
             client_id: client_id,
-            client_secret: client_secret
+            client_secret: client_secret,
         };
         try!(result.save());
         Ok(result)
@@ -67,7 +79,8 @@ impl Credentials {
 
     fn refresh(&mut self) -> Result<(), CredentialsError> {
         println!("Refreshing the credentials");
-        let flow = Credentials::create_oauth_flow(self.client_id.clone(), self.client_secret.clone());
+        let flow = Credentials::create_oauth_flow(self.client_id.clone(),
+                                                  self.client_secret.clone());
         self.access_token_data = try!(flow.refresh_access_token(&self.access_token_data));
         Ok(())
     }
@@ -91,10 +104,10 @@ impl Credentials {
         OAuth2Flow {
             client_id: client_id,
             client_secret: client_secret,
-            scopes: vec!("https://www.googleapis.com/auth/gmail.send".to_string()),
+            scopes: vec!["https://www.googleapis.com/auth/gmail.send".to_string()],
             redirect_uri: "urn:ietf:wg:oauth:2.0:oob".to_string(),
             auth_uri: "https://accounts.google.com/o/oauth2/auth".to_string(),
-            token_uri: "https://accounts.google.com/o/oauth2/token".to_string()
+            token_uri: "https://accounts.google.com/o/oauth2/token".to_string(),
         }
     }
 }

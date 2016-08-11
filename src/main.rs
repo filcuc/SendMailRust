@@ -20,7 +20,7 @@ fn main() {
     let settings = settings.unwrap();
     let credentials = match settings.setup {
         true => Credentials::setup(settings.client_id, settings.client_secret),
-        false => Credentials::load_and_refresh()
+        false => Credentials::load_and_refresh(),
     };
     if credentials.is_err() {
         println!("Failed to obtain valid credentials. Please rerun with --setup");
@@ -28,8 +28,10 @@ fn main() {
     };
     let credentials = credentials.unwrap();
     let sender = MailSender::new(&credentials);
-    let result = sender.send(settings.from_field.as_str(), settings.to_field.as_str(),
-                             settings.subject_field.as_str(), settings.body_field.as_str());
+    let result = sender.send(settings.from_field.as_str(),
+                             settings.to_field.as_str(),
+                             settings.subject_field.as_str(),
+                             settings.body_field.as_str());
     match result {
         Ok(_) => println!("Email successfully sent"),
         Err(_) => println!("An error occurred while sending"),
